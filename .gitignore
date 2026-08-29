@@ -1,0 +1,7 @@
+.build/
+Web/*.png
+Web/live-preview.png
+Web/phone-preview.png
+Web/verified-*.png
+Web/lauren-*.png
+.DS_Store

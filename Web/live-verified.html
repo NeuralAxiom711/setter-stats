@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c5d6e6">
+  <link rel="manifest" href="manifest.json">
+  <title>Setter Stats</title>
+  <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background:#c5d6e6; color:#15233b; }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body { margin:0; background:#c5d6e6; color:#15233b; }
+    .bg-photo { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; background:url('volleyball-background.png') no-repeat right bottom / contain; opacity:.22; }
+    .bg-decor { position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden; }
+    .decor-lauren { position:absolute; left:230px; bottom:10px; transform:rotate(-90deg); transform-origin:left bottom; color:#142a4f; opacity:.22; font-family:Arial, sans-serif; font-weight:900; font-size:clamp(140px,40vw,200px); letter-spacing:8px; line-height:1; white-space:nowrap; text-shadow:0 1px 1px rgba(0,0,0,.18); }
+    .decor-num { position:absolute; right:4px; top:56px; color:#e51f3d; opacity:.36; font-family:Arial, sans-serif; font-weight:900; font-size:clamp(88px,26vw,120px); line-height:1; text-shadow:0 1px 2px rgba(255,255,255,.55), 0 0 1px rgba(255,255,255,.4); }
+    .decor-scripture { position:absolute; left:0; right:0; bottom:4px; text-align:center; color:#1f3a57; opacity:.14; font-family:Georgia, serif; font-style:italic; font-size:12px; padding:0 14px; }
+    main { position:relative; z-index:1; max-width:560px; margin:auto; padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 28px); }
+    h1 { font-size:34px; margin:0 0 18px; letter-spacing:-1px; color:#15233b; }
+     .card { background:rgba(255,255,255,.9); border-radius:20px; padding:18px; margin:14px 0; box-shadow:0 2px 12px rgba(40,70,110,.12); border:1px solid #a9c2da; }
+    .eyebrow { color:#5a6b82; font-size:12px; font-weight:700; letter-spacing:.7px; }
+    .hint { color:#5a6b82; font-size:14px; }
+    .double-hint { background:rgba(209,31,55,.10); color:#b3172c; border:1px solid rgba(209,31,55,.30); border-radius:12px; padding:10px 12px; font-weight:600; margin:-4px 0 14px; }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .wide-stat { grid-column:1 / -1; }
+    .wide-title { color:#5a6b82; font-size:13px; font-weight:700; margin-bottom:12px; }
+    .wide-columns { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .wide-column { text-align:center; min-width:0; }
+    .wide-column .stat-name { min-height:32px; display:flex; align-items:center; justify-content:center; }
+    .wide-column .stat-value { margin:4px 0 9px; }
+    .serve-columns { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+    .serve-column { text-align:center; }
+    .serve-column .stat-value { margin:5px 0 10px; }
+    .legend { color:#5a6b82; font-size:13px; font-weight:600; margin:-4px 0 14px; }
+    .assist-rows { display:flex; flex-direction:column; gap:12px; }
+    .assist-row { display:flex; align-items:center; gap:10px; }
+    .assist-label { flex:0 0 92px; color:#5a6b82; font-size:13px; font-weight:700; }
+    .assist-buttons { display:flex; gap:8px; flex:1; }
+     .assist-btn { flex:1; height:42px; border:1px solid #b8cde2; border-radius:12px; background:#eef5fb; font-size:20px; font-weight:700; color:#15233b; }
+    .assist-count { flex:0 0 36px; text-align:right; font-size:22px; font-weight:800; color:#15233b; }
+     .stat { text-align:center; padding:16px 10px 12px; background:rgba(244,249,253,.9); border:1px solid #a9c2da; border-radius:16px; }
+    .stat-name { color:#5a6b82; font-size:13px; font-weight:700; }
+    .stat-value { font-size:42px; line-height:1.1; font-weight:800; margin:6px 0 10px; }
+    .attacks { color:#d11f37; } .serves { color:#2f7fd1; } .digs { color:#1f8a8a; } .errors { color:#d11f37; }
+    .buttons { display:flex; justify-content:center; gap:10px; }
+    button { border:0; font:inherit; font-weight:700; cursor:pointer; touch-action:manipulation; }
+     .step { width:56px; height:44px; border:1px solid #b8cde2; border-radius:12px; background:#eef5fb; font-size:23px; color:#15233b; }
+    .recorded { display:flex; align-items:center; gap:7px; margin-top:16px; color:#5a6b82; font-size:14px; flex-wrap:wrap; }
+    .recorded strong { color:#15233b; letter-spacing:1px; }
+    .undo { margin-left:auto; color:#2f7fd1; background:none; font-size:14px; }
+    .top-actions { display:flex; justify-content:flex-end; gap:8px; margin:-4px 0 10px; }
+     .top-action { border-radius:10px; padding:9px 12px; background:#eef5fb; color:#2f7fd1; font-size:14px; border:1px solid #b8cde2; }
+    .top-action:disabled { color:#9aa9bb; }
+    .title-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:16px; }
+    .title-row h1 { margin:0; }
+    .player-mark { color:#d11f37; font-size:13px; font-weight:900; letter-spacing:1px; transform:rotate(-8deg); white-space:nowrap; }
+     .sets-mini { flex:0 0 auto; text-align:center; background:rgba(255,255,255,.9); border:1px solid #a9c2da; border-radius:14px; padding:8px 14px; box-shadow:0 2px 10px rgba(40,70,110,.12); }
+    .sets-mini .sets-number { font-size:28px; margin:2px 0 0; color:#15233b; }
+    .view-diagram { display:block; width:100%; background:#d11f37; color:#fff; border-radius:14px; padding:15px; font-size:17px; margin-top:10px; font-weight:700; }
+    .view-saved { display:block; width:100%; background:#1f3a57; color:#fff; border-radius:14px; padding:15px; font-size:17px; margin-top:10px; font-weight:700; }
+    .diagram-title { font-size:34px; margin:0 0 14px; letter-spacing:-1px; color:#15233b; }
+    .reset { display:block; width:100%; color:#d11f37; background:none; padding:13px; font-size:15px; font-weight:700; }
+    .game-info { display:flex; flex-direction:column; gap:16px; }
+    .field-label { color:#5a6b82; font-size:13px; font-weight:700; margin-bottom:7px; }
+     .opponent-input { width:100%; font:inherit; font-size:18px; font-weight:600; padding:12px 14px; border:1px solid #b8cde2; border-radius:12px; background:#ffffff; color:#15233b; }
+    .set-control { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .set-control .set-value { text-align:center; min-width:64px; }
+    .set-control .set-value .sets-number { font-size:44px; font-weight:800; line-height:1; color:#15233b; }
+     .saved-status { display:flex; align-items:center; gap:8px; background:rgba(234,243,251,.9); color:#2f7fd1; border:1px solid #b8cde2; border-radius:12px; padding:10px 12px; font-weight:700; font-size:14px; margin:0 0 14px; }
+     .saved-status.empty { background:rgba(244,249,253,.9); color:#5a6b82; border-color:#a9c2da; }
+    .chart-group { margin-bottom:18px; }
+    .chart-group:last-child { margin-bottom:0; }
+    .chart-group-title { color:#5a6b82; font-size:13px; font-weight:700; margin-bottom:10px; }
+    .bar-row { margin:9px 0; }
+    .bar-head { display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px; }
+    .bar-head .bar-name { color:#15233b; }
+    .bar-head .bar-num { color:#5a6b82; }
+    .bar-track { background:#dce8f3; border-radius:8px; height:16px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:8px; width:0; transition:width .25s ease; }
+    /* Saved Sets review view */
+    .review-intro { color:#5a6b82; font-size:14px; margin:-6px 0 14px; }
+     .review-order { background:rgba(234,243,251,.9); color:#2f7fd1; border:1px solid #b8cde2; border-radius:10px; padding:8px 12px; font-weight:700; font-size:13px; display:inline-block; margin-bottom:14px; }
+    .ssa-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .ssa-opp { font-size:22px; font-weight:800; line-height:1.2; color:#15233b; }
+    .ssa-sn { font-size:28px; font-weight:800; color:#5a6b82; }
+    .ssa-stats { display:flex; flex-wrap:wrap; gap:8px 16px; font-size:14px; color:#5a6b82; }
+    .ssa-stats strong { color:#15233b; font-weight:800; }
+    .ssa-assists { display:flex; flex-direction:column; gap:8px; }
+    .ssa-row { display:flex; gap:10px; align-items:center; }
+    .ssa-loc { flex:0 0 92px; color:#5a6b82; font-size:13px; font-weight:700; }
+    .ssa-cell { font-size:14px; font-weight:700; color:#15233b; }
+     .ssa-code { display:inline-block; min-width:18px; padding:1px 5px; background:rgba(238,245,251,.9); border-radius:6px; font-size:12px; text-align:center; color:#15233b; margin-right:3px; }
+    .back-to-tracker { display:block; width:100%; background:#d11f37; color:#fff; border-radius:14px; padding:15px; font-size:17px; font-weight:700; }
+    .export-excel { display:block; width:100%; background:#d11f37; color:#fff; border-radius:14px; padding:15px; font-size:17px; font-weight:700; }
+  </style>
+</head>
+<body>
+<div class="bg-photo" aria-hidden="true"></div>
+<div class="bg-decor" aria-hidden="true">
+  <div class="decor-num">#4</div>
+  <div class="decor-lauren">LAUREN</div>
+  <div class="decor-scripture">I can do all things through Christ who strengthens me. — Philippians 4:13</div>
+</div>
+<main>
+  <div id="entryView">
+    <div class="top-actions"><button class="top-action" id="back" disabled>↶ Go Back</button></div>
+    <div class="title-row"><div><h1>Setter Stats</h1><div class="player-mark">LAUREN · #4</div></div><section class="sets-mini"><div class="eyebrow">SET</div><div class="sets-number" id="sets">1</div></section></div>
+    <p class="hint double-hint">⚠ Double-tap any button to confirm its action.</p>
+    <div class="saved-status empty" id="savedStatus">No sets saved on this iPhone yet</div>
+    <section class="card">
+      <div class="wide-title">GAME INFO</div>
+      <div class="game-info">
+        <div>
+          <div class="field-label">OPPONENT</div>
+          <input class="opponent-input" id="opponent" type="text" placeholder="Opponent team name" autocomplete="off" autocapitalize="words" spellcheck="false">
+        </div>
+        <div>
+          <div class="field-label">SET NUMBER — (−) go back · (+) save &amp; advance (max Set 5)</div>
+          <div class="set-control">
+            <button class="step" aria-label="Decrease set number" id="set-minus">−</button>
+            <div class="set-value"><div class="sets-number" id="setNumber">1</div></div>
+            <button class="step" aria-label="Save current set and advance" id="set-plus">+</button>
+          </div>
+          <p class="hint" id="savedSetsHint" style="margin:8px 0 0;">No sets saved yet</p>
+        </div>
+      </div>
+    </section>
+    <section class="grid" id="stats"></section>
+    <section class="card wide-stat">
+      <div class="wide-title">ASSIST QUALITY BY SET LOCATION</div>
+      <p class="legend">1 Perfect · 2 Decent · 3 Off the Mark</p>
+      <div class="assist-rows" id="assistRows"></div>
+    </section>
+    <section class="card wide-stat">
+      <div class="wide-title">SERVES</div>
+      <div class="serve-columns">
+        <div class="serve-column"><div class="stat-name">TOTAL SERVES</div><div class="stat-value serves" id="serves">0</div><div class="buttons"><button class="step" aria-label="Decrease Total Serves" data-stat="serves" data-change="-1">−</button><button class="step" aria-label="Increase Total Serves" data-stat="serves" data-change="1">+</button></div></div>
+        <div class="serve-column"><div class="stat-name">ACES</div><div class="stat-value" id="aces">0</div><div class="buttons"><button class="step" aria-label="Record an ace serve" data-ace="1">ACE</button></div></div>
+        <div class="serve-column"><div class="stat-name">SERVICE ERRORS</div><div class="stat-value errors" id="serviceErrors">0</div><div class="buttons"><button class="step" aria-label="Record a service error" data-service-error="1">ERROR</button></div></div>
+      </div>
+    </section>
+    <section class="card"><button class="view-diagram" id="viewDiagram">View Stats Diagram →</button></section>
+    <section class="card"><button class="view-saved" id="viewSaved">View Saved Sets →</button></section>
+    <section class="card"><button class="reset" id="reset">Reset everything</button></section>
+    <section class="card"><button class="export-excel" id="exportExcel">⤓ Export to Excel (double-tap)</button></section>
+  </div>
+  <div id="diagramView" hidden>
+    <div class="top-actions"><button class="top-action" id="diagramBack">← Back to Stats</button></div>
+    <h1 class="diagram-title">Stats Diagram</h1>
+    <p class="hint" id="diagramHint" style="margin:-6px 0 14px;"></p>
+    <section class="card">
+      <div class="wide-title">STATS OVERVIEW (CUMULATIVE)</div>
+      <div id="chart"></div>
+    </section>
+  </div>
+  <div id="savedSetsView" hidden>
+    <div class="top-actions"><button class="top-action" id="savedBack">← Back to Tracker</button></div>
+    <h1 class="diagram-title">Saved Sets</h1>
+    <p class="review-intro">Every saved set is listed individually below. This is a local record saved on this iPhone — no cloud sync.</p>
+    <div class="review-order" id="reviewOrder">Newest saved sets listed first</div>
+    <section class="card"><button class="export-excel" id="exportExcelSaved">⤓ Export to Excel (double-tap)</button></section>
+    <section class="card">
+      <div class="wide-title">CURRENT UNSAVED SET — WHAT WILL BE SAVED NEXT</div>
+      <div id="currentSetStatus"></div>
+    </section>
+    <div id="savedSetsList"></div>
+  </div>
+</main>
+<script>
+  const key='setter-stats-game';
+  const maxSet=5;
+  const names=[['attacks','Attacks'],['digs','Digs'],['errors','Errors']];
+  const assistLocations=[['front','Front Set'],['back','Back Set'],['middle','Middle Set'],['backRow','Back Row Set']];
+  const assistQualities=[['perfect','Perfect','#2f7fd1',1],['decent','Decent','#5a6b82',2],['offTheMark','Off the Mark','#d11f37',3]];
+  const statKeys=['attacks','serves','aces','digs','errors','serviceErrors'];
+  const akey=(loc,q)=>loc+'-'+q;
+  const assistDefaults={};
+  assistLocations.forEach(([c])=>assistQualities.forEach(([q])=>assistDefaults[akey(c,q)]=0));
+  const defaults={opponent:'',setNumber:1,assists:{...assistDefaults},attacks:0,serves:0,aces:0,digs:0,errors:0,serviceErrors:0,savedSets:[]};
+  function migrateAssists(target){
+    if(!target.assists) target.assists={};
+    assistLocations.forEach(([c])=>assistQualities.forEach(([q])=>{ if(typeof target.assists[akey(c,q)]!=='number') target.assists[akey(c,q)]=0; }));
+    if(target.perfectAssists || target.goodAssists || target.needsImprovementAssists){
+      target.assists[akey('front','perfect')]=(target.assists[akey('front','perfect')]||0)+(target.perfectAssists||0);
+      target.assists[akey('front','decent')]=(target.assists[akey('front','decent')]||0)+(target.goodAssists||0);
+      target.assists[akey('front','offTheMark')]=(target.assists[akey('front','offTheMark')]||0)+(target.needsImprovementAssists||0);
+    }
+    delete target.perfectAssists; delete target.goodAssists; delete target.needsImprovementAssists;
+  }
+  function normalize(game){
+    const clean={...defaults};
+    if(typeof game.opponent==='string') clean.opponent=game.opponent;
+    if(typeof game.setNumber==='number' && game.setNumber>=1 && game.setNumber<=maxSet) clean.setNumber=game.setNumber;
+    clean.assists={...assistDefaults};
+    if(game.assists) assistLocations.forEach(([c])=>assistQualities.forEach(([q])=>{ const v=game.assists[akey(c,q)]; if(typeof v==='number') clean.assists[akey(c,q)]=v; }));
+    migrateAssists(clean);
+    statKeys.forEach(k=>{ const v=game[k]; if(typeof v==='number' && v>=0) clean[k]=v; });
+    clean.savedSets=Array.isArray(game.savedSets)?game.savedSets.map(s=>{
+      const rec={setNumber:1,opponent:(s&&typeof s.opponent==='string')?s.opponent:'',assists:{...assistDefaults},attacks:0,serves:0,aces:0,digs:0,errors:0,serviceErrors:0};
+      if(s && typeof s.setNumber==='number') rec.setNumber=s.setNumber;
+      if(s && s.assists) assistLocations.forEach(([c])=>assistQualities.forEach(([q])=>{ const v=s.assists[akey(c,q)]; if(typeof v==='number') rec.assists[akey(c,q)]=v; }));
+      migrateAssists(rec);
+      statKeys.forEach(k=>{ const v=s&&s[k]; if(typeof v==='number' && v>=0) rec[k]=v; });
+      return rec;
+    }):[];
+    return clean;
+  }
+  function freshGame(){ return normalize({}); }
+  function resetGame(){ game=freshGame(); history=[]; save(); render(); }
+  let raw=JSON.parse(localStorage.getItem(key)||'null');
+  if(raw && typeof raw!=='object') raw=null;
+  let game=normalize(raw||{});
+  game=normalize(game); // persist normalized state on initialization
+  localStorage.setItem(key,JSON.stringify(game));
+  window.resetGame=resetGame;
+  let history=[];
+  const save=()=>localStorage.setItem(key,JSON.stringify(game));
+  const snapshot=()=>JSON.parse(JSON.stringify(game));
+  const remember=()=>{history.push(snapshot()); document.getElementById('back').disabled=false;};
+  const escapeHtml=(s)=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const stats=document.getElementById('stats');
+  names.forEach(([id,name])=>{ stats.insertAdjacentHTML('beforeend',`<section class="card stat"><div class="stat-name">${name.toUpperCase()}</div><div class="stat-value ${id}" id="${id}">0</div><div class="buttons"><button class="step" aria-label="Decrease ${name}" data-stat="${id}" data-change="-1">−</button><button class="step" aria-label="Increase ${name}" data-stat="${id}" data-change="1">+</button></div></section>`); });
+  const assistRows=document.getElementById('assistRows');
+  assistLocations.forEach(([c,name])=>{
+    const row=document.createElement('div'); row.className='assist-row';
+    let btns='';
+    assistQualities.forEach(([q,label,color,code])=>{
+      btns+=`<button class="step assist-btn" aria-label="${name} ${label}" data-assist="${akey(c,q)}">${code}</button>`;
+    });
+    row.insertAdjacentHTML('beforeend',`<div class="assist-label">${name.toUpperCase()}</div><div class="assist-buttons">${btns}</div><div class="assist-count" id="assistcount-${c}">0</div>`);
+    assistRows.appendChild(row);
+  });
+  const chartConfig=[
+    ['Attacks',[['attacks','Attacks','#d11f37']]],
+  ];
+  assistLocations.forEach(([c,name])=>{
+    const items=assistQualities.map(([q,label,color])=>['assist-'+akey(c,q), label, color]);
+    chartConfig.push([name, items]);
+  });
+  chartConfig.push(
+    ['Serves',[['serves','Total Serves','#2f7fd1'],['aces','Aces','#4aa3e0'],['serviceErrors','Service Errors','#d11f37']]],
+    ['Digs',[['digs','Digs','#1f8a8a']]],
+    ['Errors',[['errors','Errors','#d11f37']]],
+  );
+  const chart=document.getElementById('chart');
+  const chartKeys=[];
+  chartConfig.forEach(([group,items])=>{
+    const g=document.createElement('div'); g.className='chart-group';
+    g.insertAdjacentHTML('beforeend',`<div class="chart-group-title">${group.toUpperCase()}</div>`);
+    items.forEach(([k,label,color])=>{
+      chartKeys.push(k);
+      g.insertAdjacentHTML('beforeend',`<div class="bar-row" data-key="${k}"><div class="bar-head"><span class="bar-name">${label}</span><span class="bar-num" id="barval-${k}">0</span></div><div class="bar-track"><div class="bar-fill" id="bar-${k}" style="background:${color}"></div></div></div>`);
+    });
+    chart.appendChild(g);
+  });
+  const opponentInput=document.getElementById('opponent');
+  function chartValue(k){
+    if(k.indexOf('assist-')===0){
+      const ak=k.slice('assist-'.length);
+      let v=game.assists[ak]||0;
+      game.savedSets.forEach(s=>v+=((s.assists&&s.assists[ak])||0));
+      return v;
+    }
+    let v=game[k]||0;
+    game.savedSets.forEach(s=>v+=(s[k]||0));
+    return v;
+  }
+  function assistStatsHtml(assists){
+    return assistLocations.map(([c,name])=>{
+      const cells=assistQualities.map(([q,label,color,code])=>`<div class="ssa-cell"><span class="ssa-code">${code}</span> ${ (assists&&assists[akey(c,q)])||0 }</div>`).join('');
+      return `<div class="ssa-row"><span class="ssa-loc">${name}</span>${cells}</div>`;
+    }).join('');
+  }
+  function statLineHtml(s){
+    return `<div class="ssa-stats">
+      <span>Attacks <strong>${s.attacks||0}</strong></span>
+      <span>Digs <strong>${s.digs||0}</strong></span>
+      <span>Errors <strong>${s.errors||0}</strong></span>
+      <span>Serves <strong>${s.serves||0}</strong></span>
+      <span>Aces <strong>${s.aces||0}</strong></span>
+      <span>Service Errors <strong>${s.serviceErrors||0}</strong></span>
+    </div>`;
+  }
+  function renderSavedSets(){
+    const list=document.getElementById('savedSetsList');
+    const n=game.savedSets.length;
+    document.getElementById('reviewOrder').textContent = n ? ('Newest saved sets listed first — '+n+' set'+(n===1?'':'s')+' total') : 'No sets saved yet';
+    if(!n){
+      list.innerHTML='<p class="hint">No sets have been saved. Use the + button on the tracker to save a set, then it will appear here.</p>';
+    } else {
+      const ordered=[...game.savedSets].reverse();
+      list.innerHTML=ordered.map(s=>{
+        const opp=escapeHtml(s.opponent||'Unknown opponent');
+        return `<section class="card" data-set="${s.setNumber}">
+          <div class="ssa-head"><div><div class="eyebrow">SET ${s.setNumber}</div><div class="ssa-opp">${opp}</div></div><div class="ssa-sn">#${s.setNumber}</div></div>
+          ${statLineHtml(s)}
+          <div class="wide-title" style="margin-top:12px">ASSISTS BY LOCATION &amp; QUALITY</div>
+          <div class="ssa-assists">${assistStatsHtml(s.assists)}</div>
+        </section>`;
+      }).join('');
+    }
+    const cur=document.getElementById('currentSetStatus');
+    cur.innerHTML=`<div class="ssa-head"><div><div class="eyebrow">CURRENT UNSAVED SET</div><div class="ssa-opp">${escapeHtml(game.opponent||'(no opponent entered)')}</div></div><div class="ssa-sn">#${game.setNumber}</div></div>
+      ${statLineHtml(game)}
+      <div class="wide-title" style="margin-top:12px">ASSISTS BY LOCATION &amp; QUALITY</div>
+      <div class="ssa-assists">${assistStatsHtml(game.assists)}</div>`;
+  }
+  function render(){
+    names.forEach(([id])=>document.getElementById(id).textContent=game[id]);
+    ['serves','aces','serviceErrors'].forEach(id=>document.getElementById(id).textContent=game[id]);
+    document.getElementById('sets').textContent=game.setNumber;
+    document.getElementById('setNumber').textContent=game.setNumber;
+    if(document.activeElement!==opponentInput) opponentInput.value=game.opponent;
+    assistLocations.forEach(([c])=>{
+      let rowTotal=0;
+      assistQualities.forEach(([q])=>{ const k=akey(c,q); const v=game.assists[k]||0; rowTotal+=v; });
+      document.getElementById('assistcount-'+c).textContent=rowTotal;
+    });
+    const maxVal=Math.max(1,...chartKeys.map(k=>chartValue(k)));
+    chartKeys.forEach(k=>{ const v=chartValue(k); document.getElementById('bar-'+k).style.width=(v/maxVal*100)+'%'; document.getElementById('barval-'+k).textContent=v; });
+    const n=game.savedSets.length;
+    document.getElementById('savedSetsHint').textContent = n ? (n+' set'+(n===1?'':'s')+' saved — diagram shows these plus the current set.') : 'No sets saved yet — diagram shows the current set only.';
+    const statusEl=document.getElementById('savedStatus');
+    if(n){ statusEl.classList.remove('empty'); statusEl.textContent='✓ Saved on this iPhone · '+n+' set'+(n===1?'':'s'); }
+    else { statusEl.classList.add('empty'); statusEl.textContent='No sets saved on this iPhone yet'; }
+    document.getElementById('back').disabled=!history.length;
+  }
+  document.addEventListener('dblclick',e=>{ const b=e.target.closest('button'); if(!b)return;
+     if(b.dataset.stat){ const id=b.dataset.stat; const next=Math.max(0,game[id]+Number(b.dataset.change)); if(next!==game[id]){ remember(); game[id]=next; save(); render(); } }
+     if(b.dataset.assist){ remember(); const k=b.dataset.assist; game.assists[k]=(game.assists[k]||0)+1; save(); render(); }
+     if(b.dataset.ace){ remember(); game.aces++; game.serves++; save(); render(); }
+     if(b.dataset.serviceError){ remember(); game.serviceErrors++; game.serves++; save(); render(); }
+   });
+    function commitSet(){
+      const snapshot={opponent:game.opponent, setNumber:game.setNumber, assists:{...game.assists}};
+      statKeys.forEach(k=>snapshot[k]=game[k]||0);
+      game.savedSets.push(snapshot);
+      statKeys.forEach(k=>game[k]=0);
+      game.assists={...assistDefaults};
+    }
+    document.getElementById('set-plus').ondblclick=()=>{
+      const current=game.setNumber;
+      const isFinal=current>=maxSet;
+      if(isFinal && game.savedSets.some(s=>s.setNumber===current)) return;
+      const msg=isFinal
+        ? 'Save Set '+current+' and finish the match?\n\nThis stores Set '+current+'\'s stats locally and resets all counters. Choose Cancel to stay on the current set.'
+        : 'Save Set '+current+' and advance to Set '+(current+1)+'?\n\nThis stores Set '+current+'\'s stats locally and resets all counters for the next set. Choose Cancel to stay on the current set.';
+      if(confirm(msg)){
+        remember();
+        commitSet();
+        if(!isFinal){ game.setNumber=current+1; }
+        save(); render();
+      }
+    };
+   document.getElementById('set-minus').ondblclick=()=>{ if(game.setNumber>1){ remember(); game.setNumber--; save(); render(); } };
+   opponentInput.addEventListener('input',()=>{ if(opponentInput.value!==game.opponent){ remember(); game.opponent=opponentInput.value; save(); render(); } });
+   document.getElementById('back').ondblclick=()=>{if(history.length){game=history.pop();save();render();}};
+    document.getElementById('reset').ondblclick=()=>{if(confirm('Reset this game?')){resetGame();}};
+   const entryView=document.getElementById('entryView');
+   const diagramView=document.getElementById('diagramView');
+   const savedSetsView=document.getElementById('savedSetsView');
+   const showView=(view)=>{ entryView.hidden=(view!=='entry'); diagramView.hidden=(view!=='diagram'); savedSetsView.hidden=(view!=='saved'); };
+    document.getElementById('viewDiagram').ondblclick=()=>{ const n=game.savedSets.length; document.getElementById('diagramHint').textContent = n ? ('Cumulative across '+n+' saved set'+(n===1?'':'s')+' plus the current set.') : 'No sets saved yet — showing the current set only.'; showView('diagram'); };
+    document.getElementById('diagramBack').ondblclick=()=>showView('entry');
+    document.getElementById('viewSaved').ondblclick=()=>{ renderSavedSets(); showView('saved'); };
+    document.getElementById('savedBack').ondblclick=()=>showView('entry');
+    function sanitizeName(s){ s=String(s||'').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); return s||'unknown'; }
+    const exportColumns=[['Opponent','opponent'],['Set Number','setNumber'],['Attacks','attacks'],['Serves','serves'],['Aces','aces'],['Digs','digs'],['Errors','errors'],['Service Errors','serviceErrors']];
+    assistLocations.forEach(([c,name])=>assistQualities.forEach(([q,label])=>{ exportColumns.push([name+' - '+label,'a:'+akey(c,q)]); }));
+    function rowValues(set,isTotal){
+      return exportColumns.map(([h,key])=>{
+        if(key==='opponent') return isTotal?'TOTALS (All Sets)':(set.opponent||'');
+        if(key==='setNumber') return isTotal?'':String(set.setNumber||'');
+        if(key.indexOf('a:')===0){ const ak=key.slice(2); return (set.assists&&set.assists[ak])||0; }
+        return set[key]||0;
+      });
+    }
+    function buildXls(){
+      const head='<tr>'+exportColumns.map(([h])=>'<th>'+escapeHtml(h)+'</th>').join('')+'</tr>';
+      const cells=arr=>'<tr>'+arr.map(v=>'<td>'+escapeHtml(v)+'</td>').join('')+'</tr>';
+      let body='';
+      game.savedSets.forEach(s=>{ body+=cells(rowValues(s,false)); });
+      body+=cells(rowValues(game,false));
+      const total={opponent:'',setNumber:0,assists:{},attacks:0,serves:0,aces:0,digs:0,errors:0,serviceErrors:0};
+      const all=[...game.savedSets,game];
+      all.forEach(s=>{
+        total.attacks+=s.attacks||0; total.serves+=s.serves||0; total.aces+=s.aces||0;
+        total.digs+=s.digs||0; total.errors+=s.errors||0; total.serviceErrors+=s.serviceErrors||0;
+        assistLocations.forEach(([c])=>assistQualities.forEach(([q])=>{ const ak=akey(c,q); total.assists[ak]=(total.assists[ak]||0)+((s.assists&&s.assists[ak])||0); }));
+      });
+      body+=cells(rowValues(total,true));
+       const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><style>th{background:#d11f37;color:#fff;font-weight:700;text-align:left;padding:4px 8px}td{border:1px solid #a9c2da;padding:3px 8px}</style></head><body><table>'+head+body+'</table></body></html>';
+      const blob=new Blob([html],{type:'application/vnd.ms-excel'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download='Lauren_'+sanitizeName(game.opponent)+'_setter-stats.xls';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+    document.getElementById('exportExcel').ondblclick=buildXls;
+    document.getElementById('exportExcelSaved').ondblclick=buildXls;
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+  render();
+</script>
+</body>
+</html>
