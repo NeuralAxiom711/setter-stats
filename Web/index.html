@@ -91,6 +91,66 @@
      .ssa-code { display:inline-block; min-width:18px; padding:1px 5px; background:rgba(238,245,251,.9); border-radius:6px; font-size:12px; text-align:center; color:#15233b; margin-right:3px; }
     .back-to-tracker { display:block; width:100%; background:#d11f37; color:#fff; border-radius:14px; padding:15px; font-size:17px; font-weight:700; }
     .export-excel { display:block; width:100%; background:#d11f37; color:#fff; border-radius:14px; padding:15px; font-size:17px; font-weight:700; }
+    /* Game-day dashboard: compact live entry, generous touch targets. */
+    :root { --navy:#142b49; --red:#c9213c; --ink:#152d4c; }
+    body { background:#c5d4e3; color:var(--ink); }
+    main { max-width:560px; padding:12px 12px calc(100px + env(safe-area-inset-bottom)); }
+    .bg-photo { opacity:.07; }
+    .decor-num,.decor-lauren { display:none; }
+    .decor-scripture { bottom:84px; opacity:.22; font-size:10px; }
+    .title-row { background:var(--navy); color:white; border-radius:22px; padding:18px 20px; border-bottom:4px solid var(--red); margin-bottom:10px; box-shadow:0 8px 20px #142b4920; }
+    .title-row h1 { color:white; font-size:29px; letter-spacing:-.8px; margin:4px 0; }
+    .team-label { color:#b9cbdf; font-size:10px; font-weight:800; letter-spacing:2px; }
+    .player-mark { color:white; transform:none; font-size:12px; letter-spacing:2px; }
+    .sets-mini { background:#ffffff10; border-color:#ffffff30; box-shadow:none; padding:8px 16px; }
+    .sets-mini .eyebrow { color:#c4d4e5; }
+    .sets-mini .sets-number { color:white; font-size:32px; font-variant-numeric:tabular-nums; }
+    .entry-toolbar { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+    .double-hint { margin:0; padding:0; border:0; background:none; color:#435771; font-size:12px; }
+    .top-action { min-height:44px; color:var(--navy); background:#ffffffb0; border-color:#a9bdcf; }
+    .wake-status { font-size:10px; font-weight:500; margin:6px 0; }
+    .saved-status,.saved-status.empty { background:none; border:0; padding:0; margin:6px 0 10px; font-size:11px; color:#425a74; }
+    .card { background:#fff; border:1px solid #b6c7d8; box-shadow:0 3px 10px #142b4909; border-radius:18px; padding:14px; margin:10px 0; }
+    .game-info { display:grid; grid-template-columns:minmax(0,1fr) 138px; gap:12px; align-items:start; }
+    .field-label { font-size:9px; letter-spacing:.7px; margin-bottom:6px; }
+    .opponent-input { min-width:0; font-size:16px; height:44px; padding:8px; background:#f4f7fa; }
+    .set-control { gap:4px; }
+    .set-control .set-value { min-width:24px; }
+    .set-control .set-value .sets-number { font-size:25px; }
+    #savedSetsHint { display:none; }
+    .wide-title { color:var(--navy); letter-spacing:1px; font-size:11px; margin-bottom:10px; }
+    #setsPanel { border-top:3px solid var(--navy); padding:16px; }
+    #setsPanel .wide-title { text-transform:uppercase; font-size:13px; }
+    #setsPanel .legend { font-size:11px; font-weight:500; margin-bottom:12px; }
+    #setsPanel .stat-value { font-size:54px; color:var(--navy); letter-spacing:-2px; font-variant-numeric:tabular-nums; }
+    #setsPanel .wide-column .stat-name { min-height:16px; font-size:10px; letter-spacing:1px; }
+    .set-event { background:var(--navy); min-height:52px; box-shadow:0 3px 0 #07182d; }
+    .set-event[data-set-event="assist"] { background:var(--red); box-shadow:0 3px 0 #90152a; }
+    .grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
+    .grid > .stat:first-child { grid-column:auto; }
+    .grid .card { margin:0; padding:12px 6px; }
+    .grid .stat-name { font-size:9px; min-height:24px; display:flex; align-items:center; justify-content:center; }
+    .grid .stat-value { font-size:32px; margin:4px 0 10px; color:var(--navy); }
+    .step { width:44px; min-width:44px; height:44px; font-size:20px; border-radius:10px; background:#edf2f7; color:var(--navy); }
+    .buttons { gap:4px; }
+    #servesPanel .stat-name { font-size:9px; min-height:22px; }
+    #servesPanel .stat-value { font-size:32px; color:var(--navy); }
+    #servesPanel [data-ace],#servesPanel [data-service-error] { width:100%; font-size:12px; }
+    #servesPanel [data-service-error] { color:#b31e37; background:#fff0f2; border-color:#efb7c1; }
+    .match-tools { background:none; border:0; box-shadow:none; padding:0; }
+    #matchTools { width:100%; background:none; border-style:dashed; font-size:12px; }
+    #matchOptions { padding:8px; }
+    #bottomNav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:560px; z-index:5; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:8px 12px calc(8px + env(safe-area-inset-bottom)); background:#fff; border-top:1px solid #b6c7d8; box-shadow:0 -5px 20px #142b4910; }
+    .nav-item { min-height:54px; border-radius:12px; background:white; color:#596c82; font-size:11px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
+    .nav-item span { font-size:20px; line-height:1; }
+    .nav-item.active { background:var(--navy); color:white; }
+    .diagram-title { font-size:28px; }
+    .ssa-stats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; font-size:12px; }
+    .ssa-stats span { background:#f0f4f8; border-radius:8px; padding:8px; }
+    .ssa-stats strong { display:block; font-size:21px; margin-top:3px; }
+    .export-excel { background:var(--navy); font-size:14px; margin:0; }
+    button:focus-visible { outline:3px solid #e6a126; outline-offset:3px; }
+    @media(max-width:360px) { main { padding-left:8px; padding-right:8px; } .grid { gap:4px; } .grid .card { padding-left:3px; padding-right:3px; } .game-info { grid-template-columns:minmax(0,1fr) 132px; gap:8px; } .serve-columns { gap:4px; } }
   </style>
 </head>
 <body>
@@ -102,20 +162,18 @@
 </div>
 <main>
   <div id="entryView">
-    <div class="top-actions"><button class="top-action" id="back" disabled>↶ Go Back</button></div>
-    <div class="title-row"><div><h1>Setter Stats</h1><div class="player-mark">LAUREN · #4</div></div><section class="sets-mini"><div class="eyebrow">SET</div><div class="sets-number" id="sets">1</div></section></div>
-    <p class="hint double-hint">⚠ Double-tap any button to confirm its action.</p>
+    <div class="title-row"><div><div class="team-label">ARVC · GAME DAY</div><h1>Setter Stats</h1><div class="player-mark">LAUREN · #4</div></div><section class="sets-mini"><div class="eyebrow">SET</div><div class="sets-number" id="sets">1</div></section></div>
+    <div class="entry-toolbar"><p class="hint double-hint">Double-tap to confirm</p><button class="top-action" id="back" disabled>↶ Go Back</button></div>
     <p class="wake-status" id="wakeStatus">Keeping the screen awake while Setter Stats is open.</p>
     <div class="saved-status empty" id="savedStatus">No sets saved on this iPhone yet</div>
-    <section class="card">
-      <div class="wide-title">GAME INFO</div>
+    <section class="card game-card">
       <div class="game-info">
         <div>
           <div class="field-label">OPPONENT</div>
           <input class="opponent-input" id="opponent" type="text" placeholder="Opponent team name" autocomplete="off" autocapitalize="words" spellcheck="false">
         </div>
         <div>
-          <div class="field-label">SET NUMBER — (−) go back · (+) save &amp; advance (max Set 5)</div>
+          <div class="field-label">SET · + SAVE &amp; NEXT</div>
           <div class="set-control">
             <button class="step" aria-label="Decrease set number" id="set-minus">−</button>
             <div class="set-value"><div class="sets-number" id="setNumber">1</div></div>
@@ -125,16 +183,16 @@
         </div>
       </div>
     </section>
-    <section class="grid" id="stats"></section>
-    <section class="card wide-stat">
+    <section class="card wide-stat" id="setsPanel">
       <div class="wide-title">Sets/Assists</div>
-      <p class="legend">Double-tap Set for a set only, or Assist for a set that leads to a kill. Assist adds to both totals.</p>
+      <p class="legend">Assist adds to both totals. Double-tap to record.</p>
       <div class="sets-assists-columns">
         <div class="wide-column"><div class="stat-name">TOTAL SETS</div><div class="stat-value" id="totalSets">0</div><button class="set-event" data-set-event="set" aria-label="Record a set">+ Set</button></div>
         <div class="wide-column"><div class="stat-name">ASSISTS</div><div class="stat-value" id="assistCount">0</div><button class="set-event" data-set-event="assist" aria-label="Record an assist and a set">+ Assist</button></div>
       </div>
     </section>
-    <section class="card wide-stat">
+    <section class="grid" id="stats"></section>
+    <section class="card wide-stat" id="servesPanel">
       <div class="wide-title">SERVES</div>
       <div class="serve-columns">
         <div class="serve-column"><div class="stat-name">TOTAL SERVES</div><div class="stat-value serves" id="serves">0</div><div class="buttons"><button class="step" aria-label="Decrease Total Serves" data-stat="serves" data-change="-1">−</button><button class="step" aria-label="Increase Total Serves" data-stat="serves" data-change="1">+</button></div></div>
@@ -142,10 +200,7 @@
         <div class="serve-column"><div class="stat-name">SERVICE ERRORS</div><div class="stat-value errors" id="serviceErrors">0</div><div class="buttons"><button class="step" aria-label="Record a service error" data-service-error="1">ERROR</button></div></div>
       </div>
     </section>
-    <section class="card"><button class="view-diagram" id="viewDiagram">View Stats Diagram →</button></section>
-    <section class="card"><button class="view-saved" id="viewSaved">View Saved Sets →</button></section>
-    <section class="card"><button class="reset" id="reset">Reset everything</button></section>
-    <section class="card"><button class="export-excel" id="exportExcel">⤓ Export to Excel (double-tap)</button></section>
+    <section class="card match-tools"><button class="top-action" id="matchTools" aria-expanded="false">Match options</button><div id="matchOptions" hidden><button class="reset" id="reset">Reset everything</button><button class="export-excel" id="exportExcel">⤓ Export to Excel</button></div></section>
   </div>
   <div id="diagramView" hidden>
     <div class="top-actions"><button class="top-action" id="diagramBack">← Back to Stats</button></div>
@@ -168,6 +223,11 @@
     </section>
     <div id="savedSetsList"></div>
   </div>
+  <nav id="bottomNav" aria-label="Main navigation">
+    <button id="navTrack" class="nav-item active" aria-current="page"><span aria-hidden="true">◉</span>Track</button>
+    <button id="viewSaved" class="nav-item"><span aria-hidden="true">▤</span>Saved Sets</button>
+    <button id="viewDiagram" class="nav-item"><span aria-hidden="true">▥</span>Charts</button>
+  </nav>
 </main>
 <script>
   const key='setter-stats-game';
@@ -351,7 +411,9 @@
    const entryView=document.getElementById('entryView');
    const diagramView=document.getElementById('diagramView');
    const savedSetsView=document.getElementById('savedSetsView');
-   const showView=(view)=>{ entryView.hidden=(view!=='entry'); diagramView.hidden=(view!=='diagram'); savedSetsView.hidden=(view!=='saved'); };
+   const showView=(view)=>{ entryView.hidden=(view!=='entry'); diagramView.hidden=(view!=='diagram'); savedSetsView.hidden=(view!=='saved'); [['navTrack','entry'],['viewSaved','saved'],['viewDiagram','diagram']].forEach(([id,v])=>{const b=document.getElementById(id);b.className='nav-item'+(view===v?' active':'');b.ariaCurrent=view===v?'page':'false';}); if(window.scrollTo) window.scrollTo(0,0); };
+   document.getElementById('navTrack').ondblclick=()=>showView('entry');
+   document.getElementById('matchTools').ondblclick=()=>{const panel=document.getElementById('matchOptions');panel.hidden=!panel.hidden;document.getElementById('matchTools').ariaExpanded=String(!panel.hidden);};
     document.getElementById('viewDiagram').ondblclick=()=>{ const n=game.savedSets.length; document.getElementById('diagramHint').textContent = n ? ('Cumulative across '+n+' saved set'+(n===1?'':'s')+' plus the current set.') : 'No sets saved yet — showing the current set only.'; showView('diagram'); };
     document.getElementById('diagramBack').ondblclick=()=>showView('entry');
     document.getElementById('viewSaved').ondblclick=()=>{ renderSavedSets(); showView('saved'); };

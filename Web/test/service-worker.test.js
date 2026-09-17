@@ -12,6 +12,6 @@ const path=require('node:path');
  assert.equal(await pending,'CURRENT','fetch must use only the current version cache');
  assert.equal(typeof handlers.activate,'function');
  handlers.activate({waitUntil:p=>pending=p});await pending;
- assert.deepEqual(deleted,['setter-stats-v36']);
+ assert.deepEqual(deleted,['setter-stats-v36','setter-stats-v37']);
  console.log('PASS service worker uses current cache and removes only obsolete app cache');
 })().catch(e=>{console.error(e);process.exit(1)});
