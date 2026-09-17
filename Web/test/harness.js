@@ -40,7 +40,7 @@ function makeEl(id) {
   return el;
 }
 
-function runHarness(file) {
+function runHarness(file, initial) {
   const html = loadHtml(file);
   const script = extractScript(html);
 
@@ -60,6 +60,7 @@ function runHarness(file) {
   };
 
   const store = new Map();
+  if(initial) store.set('setter-stats-game', JSON.stringify(initial));
   const localStorage = {
     getItem: (k) => (store.has(k) ? store.get(k) : null),
     setItem: (k, v) => store.set(k, String(v)),
@@ -90,12 +91,16 @@ function runHarness(file) {
   const recordAssist = (key) => {
     docDblclick({ target: { closest: () => ({ dataset: { assist: key } }) } });
   };
+  const undoAssist = (location) => {
+    docDblclick({ target: { closest: () => ({ dataset: { assistUndo: location } }) } });
+  };
   const clickReset = () => {
     const el = getEl('reset');
     el.ondblclick();
   };
 
-  return { getEl, readGame, recordAssist, clickReset, registry };
+  const action = dataset => docDblclick({target:{closest:()=>({dataset})}});
+  return { getEl, readGame, recordAssist, undoAssist, clickReset, registry, action };
 }
 
 module.exports = { runHarness };

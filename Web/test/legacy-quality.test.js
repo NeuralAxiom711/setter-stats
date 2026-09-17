@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const {runHarness}=require('./harness');
+const path=require('node:path');
+const file=path.join(__dirname,'..','index.html');
+const old={perfectAssists:2,goodAssists:3,needsImprovementAssists:1};
+const h=runHarness(file,{...old,savedSets:[old]});
+assert.equal(h.readGame().totalSets,6);
+assert.equal(h.readGame().savedSets[0].totalSets,6);
+assert.equal(h.readGame().assistCount,0,'quality-only history cannot imply a kill');
+assert.deepEqual(runHarness(file,h.readGame()).readGame(),h.readGame());
+console.log('PASS oldest quality-only records retained and migration idempotent');

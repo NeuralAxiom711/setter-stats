@@ -1,0 +1,15 @@
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const {runHarness} = require('./harness');
+const file = path.join(__dirname,'..','index.html');
+const h=runHarness(file);
+h.action({setEvent:'set'});
+assert.equal(h.readGame().totalSets,1,'Set increments total sets');
+assert.equal(h.readGame().assistCount,0,'Set does not increment assists');
+h.action({setEvent:'assist'});
+assert.equal(h.readGame().totalSets,2,'Assist also increments total sets');
+assert.equal(h.readGame().assistCount,1,'Assist increments assists');
+h.getEl('back').ondblclick();
+assert.equal(h.readGame().totalSets,1,'Undo reverses both counters');
+assert.equal(h.readGame().assistCount,0);
+console.log('PASS Sets/Assists coupled counters and undo');
